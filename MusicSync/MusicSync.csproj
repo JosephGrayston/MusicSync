@@ -4,6 +4,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageVersion Include="Spectre.Console" />
+		<PackageReference Include="Spectre.Console" />
 	</ItemGroup>
 </Project>
