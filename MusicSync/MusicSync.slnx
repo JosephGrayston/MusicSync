@@ -1,7 +1,11 @@
 <Solution>
   <Folder Name="/Solution Items/">
-    <File Path=".editorconfig" />
+    <File Path="../.editorconfig" />
+    <File Path="../.gitignore" />
+    <File Path="../Directory.Build.props" />
+    <File Path="../Directory.Packages.props" />
+    <File Path="../README.md" />
   </Folder>
-  <Project Path="../MusicSync.UnitTests/MusicSync.UnitTests.csproj" />
+  <Project Path="../MusicSync.UnitTests/MusicSync.UnitTests.csproj" Id="71d19fef-67e7-4442-bf2c-4747b79219f0" />
   <Project Path="MusicSync.csproj" />
 </Solution>

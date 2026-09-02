@@ -4,10 +4,10 @@
     public sealed class Test1
     {
         [TestMethod]
-        [Ignore]
+        [Ignore("Not yet implemented")]
         public void TestMethod1()
         {
-            
+            // Not yet implemnented
         }
     }
 }

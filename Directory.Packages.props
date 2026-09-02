@@ -1,0 +1,14 @@
+<Project>
+	<PropertyGroup>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+	</PropertyGroup>
+
+	<ItemGroup Label="Music Sync Packages">
+		<PackageVersion Include="SonarAnalyzer.CSharp" Version="10.33.0.1635" />
+	</ItemGroup>
+	
+	<ItemGroup Label="Music Sync Test Packages">
+		<PackageVersion Include="MSTest" Version="4.3.3" />
+		<PackageVersion Include="Shouldly" Version="4.3.0" />
+	</ItemGroup>
+</Project>
