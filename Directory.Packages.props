@@ -5,6 +5,7 @@
 
 	<ItemGroup Label="Music Sync Packages">
 		<PackageVersion Include="SonarAnalyzer.CSharp" Version="10.33.0.1635" />
+		<PackageVersion Include="Spectre.Console" Version="0.57.2" />
 	</ItemGroup>
 	
 	<ItemGroup Label="Music Sync Test Packages">
