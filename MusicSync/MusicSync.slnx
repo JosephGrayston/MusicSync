@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../MusicSync.UnitTests/MusicSync.UnitTests.csproj" />
+  <Project Path="MusicSync.csproj" />
+</Solution>
