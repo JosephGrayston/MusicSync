@@ -1,16 +1,19 @@
 <Project>
-	<PropertyGroup>
-		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-	</PropertyGroup>
-
-	<ItemGroup Label="Music Sync Packages">
-		<PackageVersion Include="SonarAnalyzer.CSharp" Version="10.33.0.1635" />
-		<PackageVersion Include="Spectre.Console" Version="0.57.2" />
-		<PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.11" />
-	</ItemGroup>
-	
-	<ItemGroup Label="Music Sync Test Packages">
-		<PackageVersion Include="MSTest" Version="4.3.3" />
-		<PackageVersion Include="Shouldly" Version="4.3.0" />
-	</ItemGroup>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup Label="Music Sync Packages">
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.12" />
+    <PackageVersion Include="Serilog.Extensions.Hosting" Version="10.0.0" />
+    <PackageVersion Include="Serilog.Settings.Configuration" Version="10.0.1" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.35.0.4138" />
+    <PackageVersion Include="Spectre.Console" Version="0.57.2" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
+  </ItemGroup>
+  <ItemGroup Label="Music Sync Test Packages">
+    <PackageVersion Include="MSTest" Version="4.3.3" />
+    <PackageVersion Include="Shouldly" Version="4.3.0" />
+  </ItemGroup>
 </Project>

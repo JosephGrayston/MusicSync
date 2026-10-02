@@ -1,49 +1,26 @@
-﻿using MusicSync.Commands;
-using MusicSync.Menu;
+﻿using Microsoft.Extensions.Logging;
+using MusicSync.Banner;
 using Spectre.Console;
-using System.Reflection;
 
 namespace MusicSync
 {
-    public sealed class Application(IEnumerable<IPlaylistCommand> commands)
+    public sealed class Application(SyncPlaylistHandler syncPlaylistHandler, ILogger<Application> logger)
     {
-        public async Task<int> RunAsync()
+        public async Task RunAsync()
         {
             ConsoleBanner.DisplayBanner();
 
-            var menuOptions = commands
-                .Select(command => new MenuOption(
-                    GetMenuName(command),
-                    command))
-                .Append(new MenuOption("Exit", null));
+            //TO DO: Cancellation token
 
-            var selectedOption = await AnsiConsole.PromptAsync(
-                new SelectionPrompt<MenuOption>()
-                    .Title("Please select an operation")
-                    .AddChoices(menuOptions)
-                    .UseConverter(option => option.Description));
-            
-            if (selectedOption.Command is not null)
+            try
             {
-                await selectedOption.Command.ExecuteAsync();
+                await syncPlaylistHandler.HandleAsync();
             }
-
-
-          //1. Fetch current YouTube playlist
-          //2. Compare playlists
-          //3. Find YouTube matches  - TO DO add command for this and review steps
-          //4. Review matches
-          //5. Publish playlist
-          //6. Exit
-
-            return 0;
-        }
-
-        private static string GetMenuName(IPlaylistCommand command)
-        {
-           var attribute = command.GetType().GetCustomAttribute<MenuItemAttribute>();
-
-            return attribute?.Description ?? command.GetType().Name;
+            catch (Exception ex)
+            {
+                // TO DO: Add logging for the exception
+                AnsiConsole.Markup($"\n[red]{Markup.Escape(ex.Message)}[/]");
+            }
         }
     }
 }

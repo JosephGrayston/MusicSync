@@ -1,6 +1,6 @@
 ﻿using Spectre.Console;
 
-namespace MusicSync
+namespace MusicSync.Banner
 {
     public static class ConsoleBanner
     {
