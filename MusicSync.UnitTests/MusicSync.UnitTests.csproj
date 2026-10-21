@@ -2,6 +2,11 @@
 
   <ItemGroup>
     <PackageReference Include="MSTest" />
+	<PackageReference Include="Shouldly" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MusicSync\MusicSync.csproj" />
   </ItemGroup>
 
   <ItemGroup>

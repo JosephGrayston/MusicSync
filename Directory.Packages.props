@@ -1,14 +1,18 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  
   </PropertyGroup>
+
+	
   <ItemGroup Label="Music Sync Packages">
+    <GlobalPackageReference Include="SonarAnalyzer.CSharp" Version="10.35.0.4138" />
+	  
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.12" />
     <PackageVersion Include="Serilog.Extensions.Hosting" Version="10.0.0" />
     <PackageVersion Include="Serilog.Settings.Configuration" Version="10.0.1" />
     <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
-    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.35.0.4138" />
     <PackageVersion Include="Spectre.Console" Version="0.57.2" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
   </ItemGroup>

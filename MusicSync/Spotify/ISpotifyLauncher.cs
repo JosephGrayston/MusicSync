@@ -2,5 +2,5 @@
 
 public interface ISpotifyLauncher
 {
-    void TryOpenSpotify();
+    void OpenSpotify();
 }

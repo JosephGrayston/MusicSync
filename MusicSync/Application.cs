@@ -4,9 +4,9 @@ using Spectre.Console;
 
 namespace MusicSync
 {
-    public sealed class Application(SyncPlaylistHandler syncPlaylistHandler, ILogger<Application> logger)
+    public sealed class Application(SyncPlaylistService syncPlaylistHandler)
     {
-        public async Task RunAsync()
+        public async Task RunAsync(CancellationToken cancellationToken)
         {
             ConsoleBanner.DisplayBanner();
 
@@ -14,7 +14,7 @@ namespace MusicSync
 
             try
             {
-                await syncPlaylistHandler.HandleAsync();
+                await syncPlaylistHandler.HandleAsync(cancellationToken);
             }
             catch (Exception ex)
             {

@@ -4,7 +4,7 @@ namespace MusicSync.Spotify;
 
 public sealed class SpotifyLauncher : ISpotifyLauncher
 {
-    public void TryOpenSpotify()
+    public void OpenSpotify()
     {
         try
         {

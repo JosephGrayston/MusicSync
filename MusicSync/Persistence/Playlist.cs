@@ -1,4 +1,4 @@
-﻿namespace MusicSync.Data;
+﻿namespace MusicSync.Persistence;
 
 public class Playlist
 {
