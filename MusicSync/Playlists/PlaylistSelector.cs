@@ -1,64 +1,31 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MusicSync.Persistence;
-using Spectre.Console;
+﻿namespace MusicSync.Playlists;
 
-namespace MusicSync.Playlists;
-
-public sealed class PlaylistSelector(MusicSyncDbContext dbContext)
+public sealed partial class PlaylistSelector(IPlaylistPrompts prompts, IPlaylistStore store)
 {
-    private enum PlaylistOption
-    {
-        SelectExistingPlaylist,
-
-        CreateNewPlaylist
-    }
-
+    // TO DO: Revist this as the logic is awful
     public async Task<int> SelectAsync(CancellationToken cancellationToken)
     {
-        // TO DO: inject prompt class here
-        // Add converter for PlaylistOption to display user-friendly names in the prompt
-        var option = await AnsiConsole.PromptAsync(new SelectionPrompt<PlaylistOption>()
-            .Title("\nPlease select an option:")
-            .AddChoices(PlaylistOption.SelectExistingPlaylist, PlaylistOption.CreateNewPlaylist), cancellationToken);
+       var playlists = await store.GetAllAsync(cancellationToken);
 
-        return option switch
+        Playlist playlist;
+
+        if (playlists.Count == 0)
         {
-            PlaylistOption.SelectExistingPlaylist => await SelectExistingPlaylistAsync(cancellationToken),
-            PlaylistOption.CreateNewPlaylist => await CreateNewPlaylistAsync(cancellationToken),
-            _ => throw new InvalidOperationException("Invalid playlist option selected")
-        };
-    }
-
-    private async Task<int> SelectExistingPlaylistAsync(CancellationToken cancellationToken)
-    {
-        var playlists = await dbContext.Playlists
-            .OrderBy(p => p.Name)
-            .ToListAsync(cancellationToken);
-
-        var selectedPlaylist = await AnsiConsole.PromptAsync(new SelectionPrompt<Playlist>()
-            .Title("\nSearch for a playlist:")
-            .PageSize(10)
-            .EnableSearch()
-            .AddChoices(playlists)
-            .UseConverter(p => $"{p.Name} (Created: {p.CreatedAtUtc})"), cancellationToken);
-
-        return selectedPlaylist.Id;
-    }
-
-    private async Task<int> CreateNewPlaylistAsync(CancellationToken cancellationToken)
-    {
-        AnsiConsole.WriteLine();
-        var playlistName = await AnsiConsole.AskAsync<string>("Enter the name of the new playlist:", cancellationToken);
-
-        Playlist playlist = new()
+            var playlistName = await prompts.AskForNewPlaylistNameAsync(cancellationToken);
+            playlist = await store.CreateAsync(playlistName, cancellationToken);
+        }
+        else
         {
-            Name = playlistName
-        };
+            var action = await prompts.AskForPlaylistActionAsync(cancellationToken);
+            playlist = action switch
+            {
+                PlaylistAction.SelectExistingPlaylist => await prompts.ChoosePlaylistAsync(playlists, cancellationToken),
+                PlaylistAction.CreateNewPlaylist => await store.CreateAsync(await prompts.AskForNewPlaylistNameAsync(cancellationToken), cancellationToken),
+                _ => throw new InvalidOperationException($"Unknown playlist action: {action}")
+            };
 
-        dbContext.Playlists.Add(playlist);
+        }
 
-        await dbContext.SaveChangesAsync(cancellationToken);
-
-        return playlist.Id;
+        return playlist.Id;   
     }
 }

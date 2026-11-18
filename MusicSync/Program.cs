@@ -3,10 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MusicSync;
-using MusicSync.Extensions;
 using MusicSync.Infrastructure;
+using MusicSync.Infrastructure.Persistence;
 using MusicSync.Logging;
-using MusicSync.Persistence;
 
 
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { Args = args, ContentRootPath = AppContext.BaseDirectory });
@@ -16,9 +15,9 @@ applicationPaths.EnsureDirectoriesCreated();
 
 builder.Services
     .AddSingleton(applicationPaths)
-    .ConfigureServices()
-    .ConfigureEntityFramework(applicationPaths)
-    .ConfigureLogging(builder.Configuration, applicationPaths);
+    .AddMusicSyncServices()
+    .AddPersistance(applicationPaths)
+    .AddLogging(builder.Configuration, applicationPaths);
 
 using var host = builder.Build();
 

@@ -2,17 +2,17 @@
 
 namespace MusicSync.Spotify;
 
-public sealed class SpotifyPlaylistImporter(ISpotifyLauncher spotifyLauncher)
+public sealed class SpotifyPlaylistImporter(IAnsiConsole console, ISpotifyLauncher spotifyLauncher)
 {
     public async Task ImportAsync(int playlistId)
     {
-        AnsiConsole.Status()
+        console.Status()
             .Start("\nAttempting to open Spotify...", ctx =>
             {
                 spotifyLauncher.OpenSpotify();
             });
 
-        AnsiConsole.WriteLine("\nPlease login to your Spotify account and copy the playlist tracks to clipboard.");
+        console.WriteLine("\nPlease login to your Spotify account and copy the playlist tracks to clipboard.");
 
         
     // Read clipboard, parse data and persist to database
