@@ -4,8 +4,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MusicSync;
 using MusicSync.Infrastructure;
+using MusicSync.Infrastructure.Logging;
 using MusicSync.Infrastructure.Persistence;
-using MusicSync.Logging;
+using Spectre.Console;
 
 
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { Args = args, ContentRootPath = AppContext.BaseDirectory });
@@ -21,13 +22,8 @@ builder.Services
 
 using var host = builder.Build();
 
-using (var scope = host.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<MusicSyncDbContext>();
-    await db.Database.MigrateAsync(host.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopping);
-}
-
 var logger = host.Services.GetRequiredService<ILogger<Program>>();
+var console = host.Services.GetRequiredService<IAnsiConsole>();
 
 using var cts = new CancellationTokenSource();
 
@@ -39,21 +35,27 @@ Console.CancelKeyPress += (_, e) =>
 
 try
 {
+    using (var serviceScope = host.Services.CreateScope())
+    {
+        var db = serviceScope.ServiceProvider.GetRequiredService<MusicSyncDbContext>();
+        await db.Database.MigrateAsync(host.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopping);
+    }
+
     await using var scope = host.Services.CreateAsyncScope();
     var app = scope.ServiceProvider.GetRequiredService<Application>();
 
     await app.RunAsync(cts.Token);
-    return 0;
+    return ExitCodes.Success;
 }
 catch (OperationCanceledException)
 {
-    // TO DO: Avoid magic numbers (Possibly enum), find source for standard exit codes
-    return 130;
+    return ExitCodes.Cancelled;
 }
 catch (Exception ex)
 {
     MusicSyncLog.CriticalApplicationError(logger, ex);
-    Environment.ExitCode = 1;
-}
 
-return 1;
+    console.MarkupLine($"[red]Something went wrong. Please check the log file for details.[/]");
+
+    return ExitCodes.Error;
+}

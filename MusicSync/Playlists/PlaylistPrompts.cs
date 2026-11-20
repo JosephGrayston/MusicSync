@@ -5,23 +5,21 @@ namespace MusicSync.Playlists;
 
 public sealed class PlaylistPrompts(IAnsiConsole console, DateTimeFormatter formatter) : IPlaylistPrompts
 {
-    // TO DO : Add converter for PlaylistAction to display user-friendly names in the prompt
     public async Task<PlaylistAction> AskForPlaylistActionAsync(CancellationToken cancellationToken)
     {
         return await console.PromptAsync(new SelectionPrompt<PlaylistAction>()
             .Title("\nPlease select an option:")
+            .AddChoices(PlaylistAction.SelectExistingPlaylist, PlaylistAction.CreateNewPlaylist)
             .UseConverter(action => action switch
             {
                 PlaylistAction.SelectExistingPlaylist => "Select an existing playlist",
                 PlaylistAction.CreateNewPlaylist => "Create a new playlist",
                 _ => throw new ArgumentOutOfRangeException(nameof(action))
-            })
-            .AddChoices(PlaylistAction.SelectExistingPlaylist, PlaylistAction.CreateNewPlaylist), cancellationToken);
+            }), cancellationToken);
     }
 
     public async Task<Playlist> ChoosePlaylistAsync(IReadOnlyList<Playlist> playlists, CancellationToken cancellationToken)
     {
-        // Add DateTime Formatter
         return await console.PromptAsync(new SelectionPrompt<Playlist>()
             .Title("\nSearch for a playlist:")
             .PageSize(10)
@@ -32,6 +30,17 @@ public sealed class PlaylistPrompts(IAnsiConsole console, DateTimeFormatter form
 
     public async Task<string> AskForNewPlaylistNameAsync(CancellationToken cancellationToken)
     {
-        return await console.AskAsync<string>("Enter the name of the new playlist:", cancellationToken);
+        var playlistNamePrompt = new TextPrompt<string>("Enter the name of the new playlist:")
+            .Validate(name =>
+            {
+                // TO DO: Add more validations rules, we possibly need to quiery db to validate uniqueness of the name and probabbly worth putting them in a seperate class for testability and reusability
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    return ValidationResult.Error("[red]Playlist name cannot be empty.[/]");
+                }
+                return ValidationResult.Success();
+            });
+
+        return await console.PromptAsync(playlistNamePrompt, cancellationToken);
     }
 }

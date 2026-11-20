@@ -21,7 +21,6 @@ public sealed class ApplicationPaths
     {
         var localDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
-        // TO DO: Consider using a more robust method to determine the local application data folder, especially for cross-platform compatibility.
         if (string.IsNullOrWhiteSpace(localDataPath))
         {
             throw new InvalidOperationException("Could not determine the local application data folder for the current user.");

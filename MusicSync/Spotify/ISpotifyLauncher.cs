@@ -1,6 +1,8 @@
-﻿namespace MusicSync.Spotify;
+﻿using static MusicSync.Spotify.SpotifyLauncher;
+
+namespace MusicSync.Spotify;
 
 public interface ISpotifyLauncher
 {
-    void OpenSpotify();
+    SpotifyLaunchResult Open();
 }

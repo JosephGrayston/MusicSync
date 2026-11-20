@@ -1,33 +1,38 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Extensions.Logging;
+using MusicSync.Infrastructure.Logging;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace MusicSync.Spotify;
 
-public sealed class SpotifyLauncher : ISpotifyLauncher
+public sealed class SpotifyLauncher(ILogger<SpotifyLauncher> logger) : ISpotifyLauncher
 {
-    public void OpenSpotify()
+    public enum SpotifyLaunchResult
+    {
+        OpenedApp,
+        OpenedWeb,
+        Failed
+    }
+
+    public SpotifyLaunchResult Open()
+    {
+        if (TryStart("spotify:")) return SpotifyLaunchResult.OpenedApp;
+        if (TryStart("https://open.spotify.com/")) return SpotifyLaunchResult.OpenedWeb;
+
+        return SpotifyLaunchResult.Failed;
+    }
+
+    private bool TryStart(string target) 
     {
         try
         {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = "spotify:",
-                UseShellExecute = true
-            });
+            using var _ = Process.Start(new ProcessStartInfo(target) { UseShellExecute = true });
+            return true;
         }
-        catch (Exception)
+        catch (Win32Exception ex)
         {
-            try
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "https://open.spotify.com/",
-                    UseShellExecute = true
-                });
-            }
-            catch (Exception ex)
-            {
-                throw new SpotifyLaunchException("Unable to open Spotify. Please ensure that Spotify is installed on your system or access it via the web.", ex);
-            }
+            MusicSyncLog.SpotifyLaunchError(logger, ex);
+            return false;
         }
     }
 }

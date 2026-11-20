@@ -6,11 +6,13 @@ public sealed class SpotifyPlaylistImporter(IAnsiConsole console, ISpotifyLaunch
 {
     public async Task ImportAsync(int playlistId)
     {
-        console.Status()
-            .Start("\nAttempting to open Spotify...", ctx =>
-            {
-                spotifyLauncher.OpenSpotify();
-            });
+        var launchResult = spotifyLauncher.Open();
+
+        console.MarkupLine(launchResult switch
+        {
+            SpotifyLauncher.SpotifyLaunchResult.Failed => "[red]Failed to open Spotify. Please ensure Spotify is installed or accessible via web.[/]",
+            _ => "[green]Spotify opened successfully.[/]"
+        });
 
         console.WriteLine("\nPlease login to your Spotify account and copy the playlist tracks to clipboard.");
 
