@@ -2,12 +2,12 @@
 
 namespace MusicSync;
 
-public sealed class Application(ConsoleBanner consoleBanner, SyncPlaylistService sycnPlaylistService)
+public sealed class Application(ConsoleBanner consoleBanner, SyncPlaylistService syncPlaylistService)
 {
     public async Task RunAsync(CancellationToken cancellationToken)
     {
         consoleBanner.DisplayBanner();
 
-        await sycnPlaylistService.ExecuteAsync(cancellationToken);
+        await syncPlaylistService.ExecuteAsync(cancellationToken);
     }
 }

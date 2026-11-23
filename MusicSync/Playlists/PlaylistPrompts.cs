@@ -28,7 +28,7 @@ public sealed class PlaylistPrompts(IAnsiConsole console, DateTimeFormatter form
             .UseConverter(p => Markup.Escape($"{p.Name} (Created: {formatter.ToDisplay(p.CreatedAt)})")), cancellationToken);
     }
 
-    public async Task<string> AskForNewPlaylistNameAsync(IEnumerable<string> existingPlaylistNames, CancellationToken cancellationToken)
+    public async Task<string> AskForNewPlaylistNameAsync(IReadOnlySet<string> existingPlaylistNames, CancellationToken cancellationToken)
     {
         var playlistNamePrompt = new TextPrompt<string>("Enter the name of the new playlist:")
             .Validate(name => PlaylistNameValidator.Validate(name, existingPlaylistNames) switch
@@ -36,10 +36,10 @@ public sealed class PlaylistPrompts(IAnsiConsole console, DateTimeFormatter form
                 PlaylistNameValidationResult.Empty => ValidationResult.Error("[red]Playlist name cannot be empty.[/]"),
                 PlaylistNameValidationResult.TooLong => ValidationResult.Error("[red]Playlist name is too long.[/]"),
                 PlaylistNameValidationResult.AlreadyExists => ValidationResult.Error("[red]A playlist with that name already exists.[/]"),
-                PlaylistNameValidationResult.None => ValidationResult.Success(),
-                _ => throw new NotImplementedException()
+                PlaylistNameValidationResult.Valid => ValidationResult.Success(),
+                _ => throw new ArgumentOutOfRangeException(nameof(name), "Invalid playlist name validation result.")
             });
 
-        return await console.PromptAsync(playlistNamePrompt, cancellationToken);
+        return (await console.PromptAsync(playlistNamePrompt, cancellationToken)).Trim();
     }
 }

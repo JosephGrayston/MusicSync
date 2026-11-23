@@ -1,8 +1,7 @@
 ﻿namespace MusicSync.Playlists;
 
-public sealed partial class PlaylistSelector(IPlaylistPrompts prompts, IPlaylistStore store)
+public sealed class PlaylistSelector(IPlaylistPrompts prompts, IPlaylistStore store)
 {
-    // TO DO: Revist this as the logic is awful
     public async Task<int> SelectAsync(CancellationToken cancellationToken)
     {
         var playlists = await store.GetAllAsync(cancellationToken);
@@ -23,7 +22,12 @@ public sealed partial class PlaylistSelector(IPlaylistPrompts prompts, IPlaylist
 
     private async Task<Playlist> CreateAsync(IReadOnlyList<Playlist> existingPlaylists, CancellationToken cancellationToken)
     {
-        var name = await prompts.AskForNewPlaylistNameAsync(existingPlaylists.Select(p => p.Name), cancellationToken);
+        var existingNames = existingPlaylists
+            .Select(p => p.Name)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+
+        var name = await prompts.AskForNewPlaylistNameAsync(existingNames, cancellationToken);
         return await store.CreateAsync(name, cancellationToken);
     }
 }

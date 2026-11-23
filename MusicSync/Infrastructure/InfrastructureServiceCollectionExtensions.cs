@@ -10,12 +10,10 @@ using System.Globalization;
 
 namespace MusicSync.Infrastructure;
 
-public static class ServiceCollectionExtensions
+public static class InfrastructureServiceCollectionExtensions
 {
-    public static IServiceCollection AddMusicSyncServices(this IServiceCollection services)
+    public static IServiceCollection AddMusicSyncInfrastructure(this IServiceCollection services)
     {
-        services.AddScoped<Application>();
-        services.AddScoped<SyncPlaylistService>();
         services.AddSingleton<ConsoleBanner>();
         services.AddSingleton<DateTimeFormatter>();
 
@@ -25,15 +23,15 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddPersistence(this IServiceCollection services, ApplicationPaths applicationPaths) => services.AddDbContext<MusicSyncDbContext>(x => x.UseSqlite(new SqliteConnectionStringBuilder() { DataSource = applicationPaths.DatabaseFile }.ToString()));
+    public static IServiceCollection AddMusicSyncPersistence(this IServiceCollection services, ApplicationPaths applicationPaths) => services.AddDbContext<MusicSyncDbContext>(x => x.UseSqlite(new SqliteConnectionStringBuilder() { DataSource = applicationPaths.DatabaseFile }.ToString()));
 
     public static IServiceCollection AddMusicSyncLogging(this IServiceCollection services, IConfiguration configuration, ApplicationPaths applicationPaths)
     {
-        services.AddSerilog((services, loggerConfiguration) =>
+        services.AddSerilog((provider, loggerConfiguration) =>
         {
             loggerConfiguration
                 .ReadFrom.Configuration(configuration)
-                .ReadFrom.Services(services)
+                .ReadFrom.Services(provider)
                 .WriteTo.File(
                     Path.Combine(applicationPaths.LogDirectory, "musicsync-.log"),
                     formatProvider: CultureInfo.InvariantCulture,

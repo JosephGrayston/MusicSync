@@ -18,10 +18,11 @@ applicationPaths.EnsureDirectoriesCreated();
 
 builder.Services
     .AddSingleton(applicationPaths)
-    .AddMusicSyncServices()
+    .AddMusicSyncInfrastructure()
+    .AddApplicationServices()
     .AddPlaylistServices()
     .AddSpotifyServices()
-    .AddPersistence(applicationPaths)
+    .AddMusicSyncPersistence(applicationPaths)
     .AddMusicSyncLogging(builder.Configuration, applicationPaths);
 
 using var host = builder.Build();
@@ -57,7 +58,7 @@ catch (Exception ex)
 {
     MusicSyncLog.CriticalApplicationError(logger, ex);
 
-    console.MarkupLine($"[red]Something went wrong. Please check the log file for details.[/]");
+    console.MarkupLine($"[red]Something went wrong. Please check the log file for details: {applicationPaths.LogDirectory}[/]");
 
     return ExitCodes.Error;
 }

@@ -22,14 +22,12 @@ public sealed partial class SpotifyLauncher(ILogger<SpotifyLauncher> logger) : I
         }
         catch (Exception ex)
         {
-            SpotifyLauncherLog.SpotifyLaunchWarning(logger, ex, target);
+            SpotifyLaunchWarning(logger, ex, target);
             return false;
         }
     }
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Failed to open Spotify: {Target}")]
+    private static partial void SpotifyLaunchWarning(ILogger logger, Exception ex, string target);
 }
 
-public static partial class SpotifyLauncherLog
-{
-    [LoggerMessage(Level = LogLevel.Warning, Message = "Failed to open Spotify: {Target}")]
-    public static partial void SpotifyLaunchWarning(ILogger logger, Exception ex, string target);
-}

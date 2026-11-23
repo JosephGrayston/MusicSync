@@ -4,7 +4,7 @@ public static class PlaylistNameValidator
 {
     public const int MaxLength = 200;
 
-    public static PlaylistNameValidationResult Validate(string? name, IEnumerable<string> existingNames)
+    public static PlaylistNameValidationResult Validate(string? name, IReadOnlySet<string> existingNames)
     {
         var trimmedName = name?.Trim();
 
@@ -14,15 +14,14 @@ public static class PlaylistNameValidator
 
         return existingNames.Contains(trimmedName, StringComparer.OrdinalIgnoreCase)
             ? PlaylistNameValidationResult.AlreadyExists
-            : PlaylistNameValidationResult.None;
+            : PlaylistNameValidationResult.Valid;
     }
 }
 
 public enum PlaylistNameValidationResult 
 { 
-    Empty,
+    Valid,
     TooLong,
     AlreadyExists,
-    None
+    Empty,
 }
-
