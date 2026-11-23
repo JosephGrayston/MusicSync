@@ -8,7 +8,7 @@ using MusicSync.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace MusicSync.Migrations
+namespace MusicSync.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(MusicSyncDbContext))]
     [Migration("20261118213740_PlaylistNameUnique")]

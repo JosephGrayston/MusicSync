@@ -10,7 +10,7 @@ public sealed class SpotifyPlaylistImporter(IAnsiConsole console, ISpotifyLaunch
 
         console.MarkupLine(launchResult switch
         {
-            SpotifyLauncher.SpotifyLaunchResult.Failed => "[red]Failed to open Spotify. Please ensure Spotify is installed or accessible via web.[/]",
+            SpotifyLaunchResult.Failed => "[red]Failed to open Spotify. Please ensure Spotify is installed or accessible via web.[/]",
             _ => "[green]Spotify opened successfully.[/]"
         });
 

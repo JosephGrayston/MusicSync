@@ -1,19 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
-using MusicSync.Infrastructure.Logging;
-using System.ComponentModel;
 using System.Diagnostics;
 
 namespace MusicSync.Spotify;
 
-public sealed class SpotifyLauncher(ILogger<SpotifyLauncher> logger) : ISpotifyLauncher
+public sealed partial class SpotifyLauncher(ILogger<SpotifyLauncher> logger) : ISpotifyLauncher
 {
-    public enum SpotifyLaunchResult
-    {
-        OpenedApp,
-        OpenedWeb,
-        Failed
-    }
-
     public SpotifyLaunchResult Open()
     {
         if (TryStart("spotify:")) return SpotifyLaunchResult.OpenedApp;
@@ -29,10 +20,16 @@ public sealed class SpotifyLauncher(ILogger<SpotifyLauncher> logger) : ISpotifyL
             using var _ = Process.Start(new ProcessStartInfo(target) { UseShellExecute = true });
             return true;
         }
-        catch (Win32Exception ex)
+        catch (Exception ex)
         {
-            MusicSyncLog.SpotifyLaunchError(logger, ex);
+            SpotifyLauncherLog.SpotifyLaunchWarning(logger, ex, target);
             return false;
         }
     }
+}
+
+public static partial class SpotifyLauncherLog
+{
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Failed to open Spotify: {Target}")]
+    public static partial void SpotifyLaunchWarning(ILogger logger, Exception ex, string target);
 }

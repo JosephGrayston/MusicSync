@@ -6,5 +6,5 @@ public interface IPlaylistPrompts
 
     Task<Playlist> ChoosePlaylistAsync(IReadOnlyList<Playlist> playlists, CancellationToken cancellationToken);
 
-    Task<string> AskForNewPlaylistNameAsync(CancellationToken cancellationToken);
+    Task<string> AskForNewPlaylistNameAsync(IEnumerable<string> existingPlaylistNames, CancellationToken cancellationToken);
 }

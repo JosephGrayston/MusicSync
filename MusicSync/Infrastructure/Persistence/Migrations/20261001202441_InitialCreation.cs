@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MusicSync.Migrations
+namespace MusicSync.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreation : Migration

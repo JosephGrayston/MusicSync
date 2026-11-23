@@ -1,6 +1,4 @@
-﻿using static MusicSync.Spotify.SpotifyLauncher;
-
-namespace MusicSync.Spotify;
+﻿namespace MusicSync.Spotify;
 
 public interface ISpotifyLauncher
 {

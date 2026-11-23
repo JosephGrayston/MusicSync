@@ -7,7 +7,7 @@ public sealed class SyncPlaylistService(
     PlaylistSelector playlistSelector,
     SpotifyPlaylistImporter spotifyPlaylistImporter)
 {
-    public async Task HandleAsync(CancellationToken cancellationToken)
+    public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         var playlistId = await playlistSelector.SelectAsync(cancellationToken);
 

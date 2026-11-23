@@ -13,7 +13,7 @@ public sealed class PlaylistStore(MusicSyncDbContext dbContext, TimeProvider tim
             CreatedAt = timeProvider.GetUtcNow()
         };
 
-        dbContext.Playlists.Add(playlist);
+        dbContext.Set<Playlist>().Add(playlist);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -22,7 +22,7 @@ public sealed class PlaylistStore(MusicSyncDbContext dbContext, TimeProvider tim
 
     public async Task<IReadOnlyList<Playlist>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await dbContext.Playlists
+        return await dbContext.Set<Playlist>()
             .OrderBy(p => p.Name)
             .AsNoTracking()
             .ToListAsync(cancellationToken);

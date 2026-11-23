@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace MusicSync.Migrations
+namespace MusicSync.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class PlaylistNameUnique : Migration

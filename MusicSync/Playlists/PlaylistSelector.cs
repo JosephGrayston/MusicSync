@@ -5,27 +5,25 @@ public sealed partial class PlaylistSelector(IPlaylistPrompts prompts, IPlaylist
     // TO DO: Revist this as the logic is awful
     public async Task<int> SelectAsync(CancellationToken cancellationToken)
     {
-       var playlists = await store.GetAllAsync(cancellationToken);
+        var playlists = await store.GetAllAsync(cancellationToken);
 
-        Playlist playlist;
+        var action = playlists.Count == 0
+            ? PlaylistAction.CreateNewPlaylist
+            : await prompts.AskForPlaylistActionAsync(cancellationToken);
 
-        if (playlists.Count == 0)
+        var playlist = action switch
         {
-            var playlistName = await prompts.AskForNewPlaylistNameAsync(cancellationToken);
-            playlist = await store.CreateAsync(playlistName, cancellationToken);
-        }
-        else
-        {
-            var action = await prompts.AskForPlaylistActionAsync(cancellationToken);
-            playlist = action switch
-            {
-                PlaylistAction.SelectExistingPlaylist => await prompts.ChoosePlaylistAsync(playlists, cancellationToken),
-                PlaylistAction.CreateNewPlaylist => await store.CreateAsync(await prompts.AskForNewPlaylistNameAsync(cancellationToken), cancellationToken),
-                _ => throw new InvalidOperationException($"Unknown playlist action: {action}")
-            };
+            PlaylistAction.SelectExistingPlaylist => await prompts.ChoosePlaylistAsync(playlists, cancellationToken),
+            PlaylistAction.CreateNewPlaylist => await CreateAsync(playlists, cancellationToken),
+            _ => throw new InvalidOperationException($"Unknown playlist action: {action}")
+        };
 
-        }
+        return playlist.Id;
+    }
 
-        return playlist.Id;   
+    private async Task<Playlist> CreateAsync(IReadOnlyList<Playlist> existingPlaylists, CancellationToken cancellationToken)
+    {
+        var name = await prompts.AskForNewPlaylistNameAsync(existingPlaylists.Select(p => p.Name), cancellationToken);
+        return await store.CreateAsync(name, cancellationToken);
     }
 }

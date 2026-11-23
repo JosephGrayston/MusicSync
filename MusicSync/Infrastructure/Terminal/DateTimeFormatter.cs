@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace MusicSync.Infrastructure.Console;
+namespace MusicSync.Infrastructure.Terminal;
 
 public sealed class DateTimeFormatter(TimeProvider timeProvider)
 {

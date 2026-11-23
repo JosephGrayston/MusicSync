@@ -8,7 +8,7 @@ public sealed class ApplicationPaths
 
         RootDirectory = rootDirectory;
         DatabaseFile = Path.Join(RootDirectory, "musicsync.db");
-        LogDirectory = Path.Join(RootDirectory, "log");
+        LogDirectory = Path.Join(RootDirectory, "logs");
     }
 
     public string RootDirectory { get; init; }

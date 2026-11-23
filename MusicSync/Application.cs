@@ -1,13 +1,13 @@
-﻿using MusicSync.Infrastructure.Console;
+﻿using MusicSync.Infrastructure.Terminal;
 
 namespace MusicSync;
 
-public sealed class Application(ConsoleBanner consoleBanner, SyncPlaylistService syncPlaylistHandler)
+public sealed class Application(ConsoleBanner consoleBanner, SyncPlaylistService sycnPlaylistService)
 {
     public async Task RunAsync(CancellationToken cancellationToken)
     {
         consoleBanner.DisplayBanner();
 
-        await syncPlaylistHandler.HandleAsync(cancellationToken);
+        await sycnPlaylistService.ExecuteAsync(cancellationToken);
     }
 }

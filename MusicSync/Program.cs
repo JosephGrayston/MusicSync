@@ -6,6 +6,8 @@ using MusicSync;
 using MusicSync.Infrastructure;
 using MusicSync.Infrastructure.Logging;
 using MusicSync.Infrastructure.Persistence;
+using MusicSync.Playlists;
+using MusicSync.Spotify;
 using Spectre.Console;
 
 
@@ -17,8 +19,10 @@ applicationPaths.EnsureDirectoriesCreated();
 builder.Services
     .AddSingleton(applicationPaths)
     .AddMusicSyncServices()
-    .AddPersistance(applicationPaths)
-    .AddLogging(builder.Configuration, applicationPaths);
+    .AddPlaylistServices()
+    .AddSpotifyServices()
+    .AddPersistence(applicationPaths)
+    .AddMusicSyncLogging(builder.Configuration, applicationPaths);
 
 using var host = builder.Build();
 
@@ -35,19 +39,17 @@ Console.CancelKeyPress += (_, e) =>
 
 try
 {
-    using (var serviceScope = host.Services.CreateScope())
-    {
-        var db = serviceScope.ServiceProvider.GetRequiredService<MusicSyncDbContext>();
-        await db.Database.MigrateAsync(host.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopping);
-    }
-
     await using var scope = host.Services.CreateAsyncScope();
-    var app = scope.ServiceProvider.GetRequiredService<Application>();
 
+    var db = scope.ServiceProvider.GetRequiredService<MusicSyncDbContext>();
+    await db.Database.MigrateAsync(cts.Token);
+
+    var app = scope.ServiceProvider.GetRequiredService<Application>();
     await app.RunAsync(cts.Token);
+    
     return ExitCodes.Success;
 }
-catch (OperationCanceledException)
+catch (OperationCanceledException) when (cts.IsCancellationRequested)
 {
     return ExitCodes.Cancelled;
 }

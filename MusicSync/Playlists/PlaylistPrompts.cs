@@ -1,4 +1,4 @@
-﻿using MusicSync.Infrastructure.Console;
+﻿using MusicSync.Infrastructure.Terminal;
 using Spectre.Console;
 
 namespace MusicSync.Playlists;
@@ -28,17 +28,16 @@ public sealed class PlaylistPrompts(IAnsiConsole console, DateTimeFormatter form
             .UseConverter(p => Markup.Escape($"{p.Name} (Created: {formatter.ToDisplay(p.CreatedAt)})")), cancellationToken);
     }
 
-    public async Task<string> AskForNewPlaylistNameAsync(CancellationToken cancellationToken)
+    public async Task<string> AskForNewPlaylistNameAsync(IEnumerable<string> existingPlaylistNames, CancellationToken cancellationToken)
     {
         var playlistNamePrompt = new TextPrompt<string>("Enter the name of the new playlist:")
-            .Validate(name =>
+            .Validate(name => PlaylistNameValidator.Validate(name, existingPlaylistNames) switch
             {
-                // TO DO: Add more validations rules, we possibly need to quiery db to validate uniqueness of the name and probabbly worth putting them in a seperate class for testability and reusability
-                if (string.IsNullOrWhiteSpace(name))
-                {
-                    return ValidationResult.Error("[red]Playlist name cannot be empty.[/]");
-                }
-                return ValidationResult.Success();
+                PlaylistNameValidationResult.Empty => ValidationResult.Error("[red]Playlist name cannot be empty.[/]"),
+                PlaylistNameValidationResult.TooLong => ValidationResult.Error("[red]Playlist name is too long.[/]"),
+                PlaylistNameValidationResult.AlreadyExists => ValidationResult.Error("[red]A playlist with that name already exists.[/]"),
+                PlaylistNameValidationResult.None => ValidationResult.Success(),
+                _ => throw new NotImplementedException()
             });
 
         return await console.PromptAsync(playlistNamePrompt, cancellationToken);
