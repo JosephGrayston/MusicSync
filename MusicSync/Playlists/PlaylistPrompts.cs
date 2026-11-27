@@ -31,10 +31,11 @@ public sealed class PlaylistPrompts(IAnsiConsole console, DateTimeFormatter form
     public async Task<string> AskForNewPlaylistNameAsync(IReadOnlySet<string> existingPlaylistNames, CancellationToken cancellationToken)
     {
         var playlistNamePrompt = new TextPrompt<string>("Enter the name of the new playlist:")
+            .AllowEmpty()
             .Validate(name => PlaylistNameValidator.Validate(name, existingPlaylistNames) switch
             {
                 PlaylistNameValidationResult.Empty => ValidationResult.Error("[red]Playlist name cannot be empty.[/]"),
-                PlaylistNameValidationResult.TooLong => ValidationResult.Error("[red]Playlist name is too long.[/]"),
+                PlaylistNameValidationResult.TooLong => ValidationResult.Error($"[red]Playlist name is too long. Cannot exceed {PlaylistNameValidator.MaxLength} characters.[/]"),
                 PlaylistNameValidationResult.AlreadyExists => ValidationResult.Error("[red]A playlist with that name already exists.[/]"),
                 PlaylistNameValidationResult.Valid => ValidationResult.Success(),
                 _ => throw new ArgumentOutOfRangeException(nameof(name), "Invalid playlist name validation result.")

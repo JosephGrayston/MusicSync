@@ -8,7 +8,7 @@ public static class PlaylistNameValidator
     {
         var trimmedName = name?.Trim();
 
-        if (string.IsNullOrEmpty(trimmedName)) return PlaylistNameValidationResult.Empty;
+        if (string.IsNullOrWhiteSpace(trimmedName)) return PlaylistNameValidationResult.Empty;
 
         if (trimmedName.Length > MaxLength) return PlaylistNameValidationResult.TooLong;
 
